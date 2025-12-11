@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Информация о продукте</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css">
+    <link rel="icon"
+          href="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRgfdM8vinp3vtg07h9BeytTThVEDQj3Bv3kf-q87PjggXSdfdvT_aNQFaM7LsgQyxGnp8&usqp=CAU">
+</head>
+<body>
+<header class="p-3 mb-3 border-bottom sticky-top bg-white">
+    <div class="container">
+        <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
+            <a href="/" class="d-flex align-items-center mb-2 mb-lg-0 link-body-emphasis text-decoration-none">
+                <img src="https://cdn.prod.website-files.com/662fb92f905585b61b12afd8/666af67c534d424825188e46_loop_pcy%20saying%20hi%20crop.gif"
+                     width="50" height="50" alt="">
+            </a>
+            <span>Pocoyo store | Магазин девайсов</span>
+            <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
+                <li><a href="/" class="nav-link px-2">Главная</a></li>
+            </ul>
+            <span class="me-2">Поиск товара</span>
+            <div>
+                <form action="/search" method="post" class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3" role="search">
+                    {% csrf_token %}
+                    <input name="search_product" type="search" id="search" class="form-control"
+                           style="width: 450px;" placeholder="Поиск..." aria-label="Search" required>
+                </form>
+            </div>
+            {% if user.is_authenticated %}
+            <div class="text-end">
+                <a href="/cart" class="btn btn-primary" role="button">Корзины</a>
+                <a href="/logout" class="btn btn-primary" role="button">Выйти</a>
+            </div>
+            {% else %}
+            <div class="text-end">
+                <a href="/register" class="btn btn-primary" role="button">Регистрация</a>
+                <a href="{% url 'login' %}" class="btn btn-primary" role="button">Войти</a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</header>
+<div class="container">
+    <div class="row flex-lg-row-reverse align-items-center g-5 py-5">
+        <div class="col-10 col-sm-8 col-lg-6">
+            <img src="{{ product.product_photo.url }}" class="d-block mx-lg-auto img-fluid"
+                 alt="Bootstrap Themes" width="700" height="500" loading="lazy">
+        </div>
+        <div class="col-lg-6">
+            <h1 class="display-5 fw-bold text-body-emphasis lh-1 mb-3">{{ product }}</h1>
+            <p class="lead">{{ product.product_des }}</p>
+            <p class="lead">Количество: {{ product.product_count }}</p>
+            <p class="lead">Категория: <a href="/category/{{ product.product_category.id }}">
+                {{ product.product_category }}</a></p>
+            {% if user.is_authenticated %}
+            <div class="d-grid gap-2 d-md-flex justify-content-md-start">
+                <form action="/add-to-cart/{{ product.id }}" method="post">
+                    {% csrf_token %}
+                    <input type="number" name="pr_amount" class="form-control w-25 mb-2"
+                           min="1" max="{{ product.product_count }}" value="1" required>
+                    <button type="submit" class="btn btn-primary btn-lg px-4 me-md-2">Добавить в корзину</button>
+                    <button type="button" class="btn btn-outline-secondary btn-lg px-4">
+                        ${{ product.product_price }}
+                    </button>
+                </form>
+            </div>
+            {% else %}
+            <div class="d-grid gap-2 d-md-flex justify-content-md-start">
+                <a href="/register" class="btn btn-primary btn-lg px-4 me-md-2"
+                   role="button">Зарегистрируйтесь для покупки!</a>
+                <button type="button" class="btn btn-outline-secondary btn-lg px-4">
+                    ${{ product.product_price }}
+                </button>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+</body>
+</html>
